@@ -1,0 +1,130 @@
+<div class="row">
+  <div class="col">
+    <!-- Tag Filters-->
+    <div *ngFor="let tag of tags" class="btn-group">
+      <button
+        [ngClass]="{
+          'btn-primary': filters.indexOf(tag) !== -1,
+          'btn-outline-primary': filters.indexOf(tag) === -1
+        }"
+        class="btn"
+        (click)="addOrRemove(tag)"
+      >
+        {{ tag }}
+      </button>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <!-- Comments -->
+    <div *ngFor="let comment of comments | tagfilter: filters">
+      <div class="card" *ngIf="!comment.edit">
+        <div class="card-header">
+          <div class="row">
+            <div class="col">
+              <b>{{ comment.title }}</b>
+              <input
+                *ngIf="comment.edit"
+                [(ngModel)]="comment.title"
+                class="form-control"
+              />
+            </div>
+            <div class="col">
+              <div class="btn-group float-right">
+                <button
+                  (click)="edit(comment)"
+                  class="btn btn-sm btn-outline-dark"
+                >
+                  <fa-icon [icon]="faPencilAlt"></fa-icon>
+                </button>
+                <button
+                  (click)="deleteComment(comment.id)"
+                  class="btn btn-sm btn-outline-dark"
+                >
+                  <fa-icon [icon]="faTrashAlt"></fa-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="card-text" [innerHTML]="comment.text"></div>
+
+          <div class="card-link" *ngFor="let t of comment.tags">
+            <span class="badge badge-info">{{ t.name }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="comment.edit">
+        <div class="card-header">
+          <div class="row">
+            <div class="col">
+              <input [(ngModel)]="comment.copy.title" class="form-control" />
+            </div>
+            <div class="col">
+              <div class="btn-group float-right">
+                <button
+                  (click)="updateComment(comment)"
+                  class="btn btn-sm btn-outline-primary"
+                >
+                  Save
+                </button>
+                <button
+                  (click)="comment.edit = false"
+                  class="btn btn-sm btn-outline-dark"
+                >
+                  Undo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="card-text">
+            <textarea
+              [(ngModel)]="comment.copy.text"
+              class="form-control"
+            ></textarea>
+          </div>
+
+          <p></p>
+          <div class="card-link" *ngFor="let commentTag of comment.copy.tags">
+            <input type="checkbox" [(ngModel)]="commentTag.active" />
+            <span class="badge badge-info">
+              {{ commentTag.name }}
+            </span>
+          </div>
+        </div>
+
+        <!-- <datalist id="commentTags">
+          <option *ngFor="let tag of tags" [value]="tag">{{ tag }}</option>
+        </datalist> -->
+        <div class="input-group">
+          <div class="typeHead">
+            <input
+              type="text"
+              list="tags"
+              name="tag"
+              [(ngModel)]="comment.copy.newtag"
+            />
+            <datalist id="tags">
+              <select>
+                <option *ngFor="let t of tags" [value]="t"></option>
+              </select>
+            </datalist>
+          </div>
+          <button
+            class="btn btn-sm btn-primary"
+            (click)="addTagToComment(comment)"
+          >
+            Add Tag
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
